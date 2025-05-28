@@ -16,9 +16,10 @@ def evaluate(
     device: torch.device = torch.device("cpu"),
     capture_video: bool =False,
     gamma: float = 0.99,
+    **kwargs,
 ):
     envs = safety_gymnasium.vector.SafetySyncVectorEnv([make_env(env_id, 0, capture_video, run_name, gamma)])
-    agent = Model(envs).to(device)
+    agent = Model(envs, **kwargs).to(device)
     agent.load_state_dict(torch.load(model_path, map_location=device))
     agent.eval()
 
@@ -43,11 +44,11 @@ def evaluate(
 if __name__ == "__main__":
 
   
-    model_path = f"runs/SafetyHalfCheetahVelocity-v1__ppo_crpo__1__1747841224/ppo_crpo.cleanrl_model"
+    model_path = f"runs/SafetyPointGoal1-v0__ppo_lagrangian__1__1748432298/ppo_lagrangian.cleanrl_model"
     import sys
     sys.path.append('.')
-    from safety_cleanrl.ppo_crpo import make_env, Agent
-    env_id = "SafetyHalfCheetahVelocity-v1"
+    from safety_cleanrl.ppo_lagrangian import make_env, Agent
+    env_id = "SafetyPointGoal1-v0"
     device = torch.device("cuda" if torch.cuda.is_available() and True else "cpu")
     total_returns, total_costs = [], []
     for _ in range(20):
@@ -60,6 +61,8 @@ if __name__ == "__main__":
             Model=Agent,
             device=device,
             gamma=0.99,
+     
+            
         )
         total_returns.extend(episodic_returns)
         total_costs.extend(episodic_costs)

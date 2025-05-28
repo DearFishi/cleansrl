@@ -188,7 +188,6 @@ if __name__ == "__main__":
     torch.backends.cudnn.deterministic = args.torch_deterministic
 
     device = torch.device("cuda" if torch.cuda.is_available() and args.cuda else "cpu")
-    # device = torch.device("mps" if torch.backends.mps.is_available and args.cuda else "cpu")
 
     # env setup
     envs = safety_gymnasium.vector.SafetySyncVectorEnv(
